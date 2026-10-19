@@ -46,7 +46,7 @@ Prompt, adapted:
 > 2. **Skeptic:** make the best case for not doing it at all. What does doing nothing cost? What's the simplest alternative? If maintainers wanted this, why haven't they done it?
 > 3. **Downstream user:** who is affected and how? Any behaviour change they didn't ask for?
 > 4. **Six months on:** what does it cost to maintain? Does it conflict with ongoing work or a planned rewrite? Is it a general fix in the right place, or a special case (a hardcoded rule for one input, a patch on a symptom) that breaks at the next small change?
-> 5. **Fit:** does it match the house style and the size and shape of what gets merged here?
+> 5. **Fit:** does it match the house style and the size and shape of what gets merged here? Could it be a third of the size, or does it need a paragraph of defence to justify it? If so, say what the small version is.
 > 6. **The user's doubts:** answer each one by name, with evidence. Don't drop any.
 > Then give the verdict: **PR**, **Ask first** (with the exact questions a maintainer could answer in a minute), or **Drop**. Say where the evidence was thin and what you'd need to be sure. Link every claim about the project.
 
