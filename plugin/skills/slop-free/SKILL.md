@@ -1,6 +1,6 @@
 ---
 name: slop-free
-description: Guides agent-assisted contributions to open-source repos the user doesn't maintain, from picking a bug to closing the PR, so the PR gets merged instead of closed as a duplicate, low quality or against policy. Use whenever the user wants to fix an issue in someone else's GitHub repo, asks whether a repo or issue is worth contributing to, wants to open, update or describe an upstream pull request, needs to answer a maintainer's or a review bot's comments (CodeRabbit, Copilot, Greptile, cubic), has a failing CI check or merge conflict on their PR, or asks to check their open PRs for replies. Also use for "first open source contribution" and "good first issue" requests. Not for repos the user maintains.
+description: Guides agent-assisted contributions to open-source repos the user doesn't maintain, from picking a bug to closing the PR, so the PR gets merged instead of closed as a duplicate, low quality or against policy. Use whenever the user wants to fix an issue in someone else's GitHub repo, asks whether a repo or issue is worth contributing to, wants to open, update or describe an upstream pull request, needs to answer a maintainer's or a review bot's comments (CodeRabbit, Copilot, Greptile, cubic), has a failing CI check or merge conflict on their PR, or asks to check their open PRs for replies. Also use for "first open source contribution" and "good first issue" requests, and when the user doubts whether an MR/PR is what the project wants or worth doing at all. Not for repos the user maintains.
 ---
 
 # slop-free
@@ -64,6 +64,11 @@ honestly is what keeps the door open.
 
 ## 1. Choosing the bug
 
+> **Fork addition:** the user often lacks the project's context, and whether a
+> change *belongs* matters more than how well it's made. Read
+> `references/context-fit.md` before starting and follow its "Before choosing"
+> steps (rejected PRs, strategy files, overlap) alongside the list below.
+
 - **Is anyone merging outside work?** A merge in the last two weeks, human replies
   on outside PRs, and several distinct outside authors merged recently. Lots of open
   issues with few outside authors merged means closed in practice.
@@ -114,6 +119,10 @@ honestly is what keeps the door open.
   that never ran looks exactly like a check that passed.
 
 ## 4. Writing the PR
+
+> **Fork addition:** before drafting, do the "Before writing the PR" steps in
+> `references/context-fit.md` (challenge the change, the review panel in
+> `references/review-panel.md`) and give the user a PR / ask first / drop verdict, not "ready".
 
 - Follow the template and title convention exactly.
 - Read three recently merged PRs and match their length and tone.
@@ -176,3 +185,5 @@ The scripts and examples are GitHub-specific; the rules apply on any forge.
 - `references/templates.md`: PR description, review replies, claims, closes, nudges.
 - `references/windows.md`: toolchain traps on Windows.
 - `references/lessons.md`: every rule with the incident that taught it.
+- `references/context-fit.md` (fork): whether the change belongs here at all.
+- `references/review-panel.md` (fork): scouts plus an independent judge for that question.

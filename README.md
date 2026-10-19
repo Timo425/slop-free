@@ -19,6 +19,18 @@ The short version:
 - A check that never ran looks exactly like a check that passed.
 - At most 2 open PRs per repo and 3 new ones a week. Look after the open ones first.
 
+## This fork
+
+Adds a "does this belong here at all?" layer on top of the upstream rules, for
+contributors who don't know a project's context:
+
+- `references/context-fit.md`: read rejected PRs and strategy files (roadmap,
+  non-goals, decision logs, dependency bot config), challenge the change, and give
+  a PR / ask first / drop verdict instead of "ready".
+- `references/review-panel.md`: cheap scouts (Haiku) gather evidence in parallel,
+  then one strong judge (Opus) that never saw the conversation reviews the change
+  from several perspectives.
+
 ## Install
 
 ```bash
