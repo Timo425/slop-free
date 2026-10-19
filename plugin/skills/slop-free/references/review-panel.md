@@ -15,6 +15,8 @@ A panel for the question in `context-fit.md`: is this the right thing to do here
 
 **Agents without subagents** (Gemini, Vibe): do the scouts' searches yourself, one after another. Then run the judge pass as a separate step, working only from the evidence, the diff and the rules, and argue each perspective as if you hadn't written the change.
 
+**Ask the user first:** "What are your doubts about this, however vague?" Their hunches ("do they even want this?", "feels too big", "isn't someone else doing this?") are often the best angles. Pass them to the judge word for word, and send any that need facts to the matching scout.
+
 Give every scout: the repo (`OWNER/REPO`), the issue (if any), the files and functions touched, and a two-line description of the change. Each scout returns at most ~25 lines: findings with links and short quotes, plus "searched X, found nothing" lines. No recommendations.
 
 ## Scouts
@@ -26,14 +28,15 @@ Give every scout: the repo (`OWNER/REPO`), the issue (if any), the files and fun
 
 ## Judge
 
-Inputs: the diff (or the plan, if nothing is written yet), the issue text, the repo's contribution and AI rules, and the scouts' reports. Prompt, adapted:
+Inputs: the diff (or the plan, if nothing is written yet), the issue text, the user's doubts, the repo's contribution and AI rules, and the scouts' reports. Prompt, adapted:
 
 > You maintain OWNER/REPO. You haven't seen how this change was made. Using only the evidence below, review it from each perspective in a few lines:
 > 1. **Maintainer:** would you merge it, ask for changes, or close it? Base it on the project's stated direction and past rejections, not on code quality alone.
 > 2. **Skeptic:** make the best case for not doing it at all. What does doing nothing cost? What's the simplest alternative? If maintainers wanted this, why haven't they done it?
 > 3. **Downstream user:** who is affected and how? Any behaviour change they didn't ask for?
-> 4. **Six months on:** what does this cost to maintain? Does it conflict with ongoing work or a planned rewrite?
+> 4. **Six months on:** what does this cost to maintain? Does it conflict with ongoing work or a planned rewrite? Is it a general fix in the right place, or a special case (a hardcoded rule for one input, a patch on a symptom) that breaks at the next small change?
 > 5. **Fit:** does it match the house style and the size and shape of what gets merged here?
+> 6. **The user's doubts:** answer each one they raised, by name, with evidence. Don't drop any.
 > Then give the verdict: **PR**, **Ask first** (with the exact questions a maintainer could answer in a minute), or **Drop**. Say where the evidence was thin and what you'd need to be sure. Cite links for every claim about the project.
 
 ## Using the result
