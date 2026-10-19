@@ -1,46 +1,59 @@
 # Review panel (fork addition)
 
-A panel for the question in `context-fit.md`: is this the right thing to do here, done the right way? One agent reviewing its own work misses what it already assumed. The panel splits the work: cheap scouts gather evidence from different places in parallel, and one strong judge, who never saw the conversation, weighs it from several perspectives.
+For the question in `context-fit.md`: is this the right thing to do here, done the right way? An agent reviewing its own work misses what it already assumed. The core of the panel is one strong judge who never saw the conversation. On repos with a lot of history, cheap scouts add evidence for it.
 
-**Why the split:** small models are good at finding and quoting things and weak at judging fit. As judges they produce plausible, generic concerns, which is noise. So scouts report facts with links and never give verdicts. Judgment goes to one strong model, which gets its range of angles from the different evidence and from being asked each perspective explicitly.
+**Why it's shaped this way:**
+- Small models do well on a narrow, checkable task (one question, given inputs, quote the source). Given an open question, they become confidently wrong, and several of them can agree on the same wrong finding. So scouts get bounded checks only, never verdicts, and everything they report is verified before it's used.
+- Different perspectives come mostly from different inputs and questions, not from more agents of the same model, which share blind spots.
+- Whether the scouts paid off is measured every run (scorecard), not assumed.
 
 ## When
 
-- Non-trivial contributions: before writing the PR (phase 4). Scouts 1–3 can already run in phase 1, while choosing; reuse their reports later instead of re-running them.
+- **Judge only:** most contributions, including small repos with little history. You (the orchestrator) do the context-fit searches yourself.
+- **Judge + scouts:** non-trivial changes to repos with a lot of history (many closed PRs, several areas touched), where reading it all would flood your own context.
 - Skip it for typo or doc fixes that a policy or issue explicitly invites.
 
-## How to run it
+## Step 1: the user's doubts
 
-**Claude Code:** spawn the scouts in parallel with the Agent tool (`model: haiku`, read-only: `gh`, `git`, reading files, web fetch). When they're done, spawn the judge (`model: opus`) with the inputs below. Don't pass on your own opinion of the change, or the conversation.
+Ask: "What are your doubts about this, however vague?" Hunches like "do they even want this?", "feels too big" or "isn't someone else doing this?" are often the best angles. Pass them to the judge word for word. If a doubt needs facts, add a scout check for it.
 
-**Agents without subagents** (Gemini, Vibe): do the scouts' searches yourself, one after another. Then run the judge pass as a separate step, working only from the evidence, the diff and the rules, and argue each perspective as if you hadn't written the change.
+## Step 2: scouts (optional, in parallel)
 
-**Ask the user first:** "What are your doubts about this, however vague?" Their hunches ("do they even want this?", "feels too big", "isn't someone else doing this?") are often the best angles. Pass them to the judge word for word, and send any that need facts to the matching scout.
+**Claude Code:** Agent tool, `model: haiku`, read-only (`gh`, `git`, reading files, web fetch). **Agents without subagents:** run the checks yourself, one after another.
 
-Give every scout: the repo (`OWNER/REPO`), the issue (if any), the files and functions touched, and a two-line description of the change. Each scout returns at most ~25 lines: findings with links and short quotes, plus "searched X, found nothing" lines. No recommendations.
+Each scout gets **one bounded check**, the exact inputs, and the files or queries it may use. Split the checks by area of the change (the files and functions touched), so scouts don't all re-read the same history. Typical checks:
 
-## Scouts
+1. **Rejections in this area:** closed-unmerged PRs and not-planned/duplicate issues that touched `<files>` or mention `<function/topic>`. For each: link, plus the maintainer's closing reason, quoted. Start with `gh pr list -R OWNER/REPO --state closed --search "is:unmerged <term>" --limit 50` and `gh issue list -R OWNER/REPO --state closed --search 'reason:"not planned" <term>' --limit 50`.
+2. **Stated direction:** in `<ROADMAP, README scope/non-goals, CONTRIBUTING, AI policy, ADRs/decision log, renovate.json / dependabot.yml>`, quote every line that bears on `<the change in one sentence>`.
+3. **Overlap:** open or recently closed PRs and issues touching `<files>`, plus commits to `<files>` in the last 3 months. Is a rewrite or move underway?
+4. **House style:** the last 3–5 merged PRs that touched `<area>`: size, tests added, description length, and the changes reviewers asked for. Quote them.
+5. **A user doubt** that needs facts, phrased as a check.
 
-1. **Rejections.** Closed-but-unmerged PRs and issues closed as wontfix, not planned or duplicate, from the last ~6 months and any time in the same area. For each relevant one: the link and the maintainer's reason, quoted. Start with `gh pr list -R OWNER/REPO --state closed --search "is:unmerged" --limit 50` and `gh issue list -R OWNER/REPO --state closed --search 'reason:"not planned"' --limit 50`.
-2. **Strategy.** Statements of direction: ROADMAP, non-goals or scope sections, CONTRIBUTING and AI policy, ADRs or decision logs, the dependency bot config (`renovate.json`, `.github/dependabot.yml`), recent release notes, and maintainer comments in discussions that describe what the project is or isn't. Quote the lines that bear on this change.
-3. **Overlap.** Open and recently closed PRs and issues touching the same files, functions or topic, whether or not they mention the issue. Recent commits in the area (is a rewrite underway?). Forks or sibling projects where this work actually happens.
-4. **House style.** 3–5 recently merged PRs in the same area: size, how tests were done, how the description reads, and what maintainers asked for in review before merging.
+Every scout answer: findings with link and quote, "searched X, found nothing" lines (a valid answer), at most ~25 lines, no recommendations.
 
-## Judge
+## Step 3: verify
 
-Inputs: the diff (or the plan, if nothing is written yet), the issue text, the user's doubts, the repo's contribution and AI rules, and the scouts' reports. Prompt, adapted:
+Before the judge sees anything, open the links for every scout finding the verdict could depend on (and a sample of the rest) and check that the quote is there and says what the scout claims. Drop anything you can't confirm and note it for the scorecard.
 
-> You maintain OWNER/REPO. You haven't seen how this change was made. Using only the evidence below, review it from each perspective in a few lines:
-> 1. **Maintainer:** would you merge it, ask for changes, or close it? Base it on the project's stated direction and past rejections, not on code quality alone.
+## Step 4: the judge
+
+**Claude Code:** Agent tool, `model: opus`, read-only, allowed to read the repo and its history itself. Give it: the diff (or the plan), the issue text, the repo's contribution and AI rules, the user's doubts, and the verified scout findings, labelled as leads, not the whole picture. Don't pass your own opinion of the change, or the conversation. **Without subagents:** do this as a separate pass from those inputs only, and argue each perspective as if you hadn't written the change.
+
+Prompt, adapted:
+
+> You maintain OWNER/REPO. You haven't seen how this change was made. Read the change and as much of the repo and its history as you need; the scout findings are leads, not the whole picture. Review it from each perspective in a few lines:
+> 1. **Maintainer:** would you merge it, ask for changes, or close it? Base it on the project's direction and past rejections, not on code quality alone.
 > 2. **Skeptic:** make the best case for not doing it at all. What does doing nothing cost? What's the simplest alternative? If maintainers wanted this, why haven't they done it?
 > 3. **Downstream user:** who is affected and how? Any behaviour change they didn't ask for?
-> 4. **Six months on:** what does this cost to maintain? Does it conflict with ongoing work or a planned rewrite? Is it a general fix in the right place, or a special case (a hardcoded rule for one input, a patch on a symptom) that breaks at the next small change?
+> 4. **Six months on:** what does it cost to maintain? Does it conflict with ongoing work or a planned rewrite? Is it a general fix in the right place, or a special case (a hardcoded rule for one input, a patch on a symptom) that breaks at the next small change?
 > 5. **Fit:** does it match the house style and the size and shape of what gets merged here?
-> 6. **The user's doubts:** answer each one they raised, by name, with evidence. Don't drop any.
-> Then give the verdict: **PR**, **Ask first** (with the exact questions a maintainer could answer in a minute), or **Drop**. Say where the evidence was thin and what you'd need to be sure. Cite links for every claim about the project.
+> 6. **The user's doubts:** answer each one by name, with evidence. Don't drop any.
+> Then give the verdict: **PR**, **Ask first** (with the exact questions a maintainer could answer in a minute), or **Drop**. Say where the evidence was thin and what you'd need to be sure. Link every claim about the project.
 
-## Using the result
+## Step 5: report to the user
 
-- Show the user the verdict, the perspective that drove it, and any open questions. Don't smooth over a "close" or a "drop" because the code is good.
-- If the verdict is close, or the judge said the evidence was thin, recommend a second panel run in a later session before anything goes public.
-- Internal work (Jira/GitLab): the scouts search those trackers and neighbouring projects instead. "Maintainer" becomes the lead developer, and the strategy sources include project agreements (e.g. "customer project: no minor upgrades").
+- The verdict, the perspective that drove it, the answers to their doubts, and any open questions. Don't smooth over a "close" or a "drop" because the code is good.
+- **Scorecard**, when scouts ran: per scout, findings confirmed, dropped as wrong or unverifiable, findings the judge actually used, and tokens. If scouts keep adding nothing on a kind of repo, stop using them there.
+- If the verdict was close or the evidence thin, recommend running the panel again in a later session before anything goes public.
+
+Internal work (Jira/GitLab etc.): the same steps, with those trackers and neighbouring projects as sources. "Maintainer" becomes the lead developer or owning team, and the stated direction includes project agreements (e.g. "customer project: no minor version upgrades").
