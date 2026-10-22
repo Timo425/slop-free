@@ -186,4 +186,4 @@ The scripts and examples are GitHub-specific; the rules apply on any forge.
 - `references/windows.md`: toolchain traps on Windows.
 - `references/lessons.md`: every rule with the incident that taught it.
 - `references/context-fit.md` (fork): whether the change belongs here at all.
-- `references/review-panel.md` (fork): scouts plus an independent judge for that question.
+- `references/review-panel.md` (fork): an independent judge for that question.

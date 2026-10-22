@@ -12,10 +12,9 @@ So treat the user's lack of context as the main risk, not the code. You can't fu
 
 ## Before choosing or fixing (with phase 1)
 
-On repos with a lot of history, the bounded scout checks in `references/review-panel.md` can do these searches in parallel.
-
 - **Read the rejections.** Closed-but-unmerged PRs and issues closed as wontfix, not planned or duplicate, with the maintainer comments. These are where unwritten rules get written down: "out of scope", "we're rewriting this", "we don't take dependency bumps". Look at the last few months and anything touching the same area. `gh pr list -R OWNER/REPO --state closed --search "is:unmerged" --limit 30`, then read the relevant ones.
 - **Read the strategy, if any exists:** ROADMAP, non-goals or scope sections in README/CONTRIBUTING, ADRs or decision logs, and the dependency bot config (`renovate.json`, `.github/dependabot.yml`), which states the upgrade policy outright.
+- **Check who owns the issue.** If a maintainer is assigned to it, or has said they'd rather do it differently or themselves, treat it as Ask first: they are often reworking that area and will close an outside fix.
 - **Look for overlap beyond duplicates:** open PRs or issues in the same area, an ongoing refactor, a fork or sibling project where the real work happens, linked discussions.
 - Write down the project's direction in 2–3 sentences as you understand it. If you can't, that's a finding.
 
@@ -27,14 +26,14 @@ On repos with a lot of history, the bounded scout checks in `references/review-p
    - Does it fit the direction you wrote down, or only the issue's wording?
    - Is the value worth a maintainer's review time? Cosmetic or speculative changes rarely are.
    - Who else is affected: downstream users, other open PRs, a planned rewrite?
-2. **Review panel.** Run `references/review-panel.md`: collect the user's doubts, then a judge that never saw this conversation reviews the change from several perspectives and gives the verdict. On repos with a lot of history, bounded scouts gather evidence for it first, and you verify that evidence. Take a "close" seriously even if the code is fine.
+2. **Review panel.** Run `references/review-panel.md`: collect the user's doubts, then a judge that never saw this conversation reviews the change from several perspectives and gives the verdict. Take a "close" seriously even if the code is fine.
 3. **List what you couldn't verify:** domain behaviour you inferred, project intentions you guessed, anything you assumed because the user didn't know.
 
 ## The verdict to give the user
 
 Not "ready". One of:
 
-- **PR**: it fits, with the evidence (rejections read, direction checked, reviewer pass).
+- **PR**: it fits, with the evidence (rejections read, direction checked, reviewer pass) and the judge's confidence at 4 or 5.
 - **Ask first**: open an issue or comment with the specific open questions, written so a maintainer can answer in a minute. This is the cheap way to borrow context only the maintainers have.
 - **Drop**: say why. It's a fine outcome.
 

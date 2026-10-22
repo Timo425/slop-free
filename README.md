@@ -28,9 +28,8 @@ contributors who don't know a project's context:
   non-goals, decision logs, dependency bot config), challenge the change, and give
   a PR / ask first / drop verdict instead of "ready".
 - `references/review-panel.md`: an independent judge (Opus) with fresh context
-  reviews the change from several perspectives, including the user's own doubts.
-  On repos with a lot of history, cheap scouts (Haiku) run bounded evidence checks
-  first, the orchestrator verifies them, and a scorecard shows whether they helped.
+  reviews the change from several perspectives, including the user's own doubts,
+  and only says PR at confidence 4 or 5.
 
 ## Install
 
