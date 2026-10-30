@@ -105,7 +105,36 @@ if [ ${#FILES[@]} -gt 0 ]; then
 fi
 
 echo
-echo "## 6. Does their CI run on Windows?"
+echo "## 6. What the project has turned down recently (last 120 days)"
+# Rejections are where unwritten rules get written down. For each closed-unmerged PR
+# and each issue closed as not planned, show the maintainer's last word on it.
+since=$(days_ago 120)
+reason() {
+  gh api "repos/$REPO/issues/$1/comments?per_page=100" --jq '
+    [.[] | select(.author_association | test("^(OWNER|MEMBER|COLLABORATOR)$"))] | last
+    | if . == null then "      (no maintainer comment)"
+      else "      \(.user.login): \(.body | gsub("\n"; " ") | .[0:160])" end' 2>/dev/null
+}
+gh api -X GET search/issues -f q="repo:$REPO is:pr is:unmerged is:closed closed:>=$since -author:app/dependabot -author:app/renovate" \
+  -f sort=updated -f per_page=12 --jq '.items[] | "\(.number)\t\(.user.login)\t\(.title)"' |
+while IFS=$'\t' read -r num author title; do
+  echo "  PR #$num by $author: $title"
+  reason "$num"
+done
+gh api -X GET search/issues -f q="repo:$REPO is:issue reason:\"not planned\" closed:>=$since" \
+  -f sort=updated -f per_page=8 --jq '.items[] | "\(.number)\t\(.title)"' |
+while IFS=$'\t' read -r num title; do
+  echo "  issue #$num (not planned): $title"
+  reason "$num"
+done
+echo "  Strategy files present:"
+for p in ROADMAP.md docs/ROADMAP.md .github/ROADMAP.md docs/adr docs/decisions renovate.json .github/renovate.json .renovaterc .renovaterc.json .github/dependabot.yml; do
+  gh api "repos/$REPO/contents/$p" --silent 2>/dev/null && echo "    $p"
+done
+echo "  (read the closes in the area you'd touch; an empty list is not a green light)"
+
+echo
+echo "## 7. Does their CI run on Windows?"
 wf=$(gh api "repos/$REPO/contents/.github/workflows" --jq '.[].path' 2>/dev/null | head -40)
 if [ -z "$wf" ]; then
   echo "  no GitHub Actions workflows found"
