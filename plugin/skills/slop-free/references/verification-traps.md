@@ -18,6 +18,10 @@ Before reporting a pass, ask which of them could apply.
   tests instead.
 - **Shallow clones make history searches empty.** `git log -S` on a depth-limited
   clone found nothing and exited 0. Deepen the clone before concluding anything.
+- **`gh pr edit` can fail and leave the PR as it was.** It stopped on a GraphQL
+  "Projects (classic) is being deprecated" error, and the description kept its old
+  text. Read the body back after any edit; `gh api -X PATCH
+  repos/OWNER/REPO/pulls/N -F body=@file` worked.
 - **A harness that only prints totals.** "1 tests passed" per file says nothing
   about your new test. Break its expectation once and watch it fail.
 
