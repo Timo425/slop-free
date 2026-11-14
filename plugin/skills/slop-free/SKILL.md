@@ -81,6 +81,18 @@ honestly is what keeps the door open.
 - **Is it wanted?** An accepting-PRs label, a maintainer asking for it, or a kind of
   fix the repo demonstrably merges. Otherwise ask on the issue first. "Approved"
   means wanted, not small.
+- **What has the project already turned down?** Read the recent closed-but-unmerged
+  PRs and the issues closed as not planned, with the maintainers' reasons, above all
+  in the area you'd touch. That's where the unwritten rules get written down: "out of
+  scope", "we're rewriting this", "we don't take dependency bumps". `preflight.sh`
+  lists them. Read the strategy too, if there is any: a roadmap, a non-goals section,
+  decision records, and the Renovate or Dependabot config, which states the upgrade
+  policy outright.
+- **Does a maintainer own it?** If one is assigned to the issue or has said they'd
+  rather do it differently, ask first: they're often reworking that area.
+- **Give a verdict, not "ready":** PR, ask first (an issue or comment with questions
+  a maintainer can answer in a minute), or drop. Ask first and drop are good
+  outcomes; a well-made PR the project doesn't want is not.
 - **Is the code staying put?** Skip code that's being moved or rewritten.
 - **Will it survive one read?** Prefer a narrow, demonstrable wrong output over
   retuning a heuristic. If the diff needs a paragraph of defence, don't open it.
