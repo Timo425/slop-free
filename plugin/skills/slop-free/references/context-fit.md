@@ -12,9 +12,8 @@ So treat the user's lack of context as the main risk, not the code. You can't fu
 
 ## Before choosing or fixing (with phase 1)
 
-- **Read the rejections.** Closed-but-unmerged PRs and issues closed as wontfix, not planned or duplicate, with the maintainer comments. These are where unwritten rules get written down: "out of scope", "we're rewriting this", "we don't take dependency bumps". Look at the last few months and anything touching the same area. `gh pr list -R OWNER/REPO --state closed --search "is:unmerged" --limit 30`, then read the relevant ones.
-- **Read the strategy, if any exists:** ROADMAP, non-goals or scope sections in README/CONTRIBUTING, ADRs or decision logs, and the dependency bot config (`renovate.json`, `.github/dependabot.yml`), which states the upgrade policy outright.
-- **Check who owns the issue.** If a maintainer is assigned to it, or has said they'd rather do it differently or themselves, treat it as Ask first: they are often reworking that area and will close an outside fix.
+Phase 1 in SKILL.md covers the rejections, the strategy files and who owns the issue. Add:
+
 - **Look for overlap beyond duplicates:** open PRs or issues in the same area, an ongoing refactor, a fork or sibling project where the real work happens, linked discussions.
 - Write down the project's direction in 2–3 sentences as you understand it. If you can't, that's a finding.
 

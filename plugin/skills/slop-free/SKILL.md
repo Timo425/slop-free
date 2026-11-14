@@ -47,8 +47,10 @@ requires the contributor's own words.
 ## Project policy comes first
 
 Read CONTRIBUTING, any AGENTS.md or AI policy, and the PR template before
-investigating, not after. `scripts/preflight.sh` prints the lines that usually
-matter. Then do exactly what they say:
+investigating, not after, and the guides AGENTS.md points to for the kind of change
+you'll make (a C++ or style guide): their rules on comments, naming and structure are
+what reviewers check. `scripts/preflight.sh` prints the lines that usually matter.
+Then do exactly what they say:
 
 - Declines AI-assisted or agent-written contributions: stop and tell the user.
 - Requires disclosure: do it in the form asked (a label, a checkbox, a trailer, a
@@ -66,8 +68,9 @@ honestly is what keeps the door open.
 
 > **Fork addition:** the user often lacks the project's context, and whether a
 > change *belongs* matters more than how well it's made. Read
-> `references/context-fit.md` before starting and follow its "Before choosing"
-> steps (rejected PRs, strategy files, overlap) alongside the list below.
+> `references/context-fit.md` before starting and add its "Before choosing" steps
+> (overlap with ongoing work, the project's direction in a few sentences) to the
+> list below.
 
 - **Is anyone merging outside work?** A merge in the last two weeks, human replies
   on outside PRs, and several distinct outside authors merged recently. Lots of open
@@ -110,7 +113,11 @@ honestly is what keeps the door open.
   genuinely wrong, say so in the PR and have the user verify it.
 - Keep only checks that can fail. A guard that only exists to please the type
   checker is dead code.
-- Match the file's comment density. The why goes in the commit message and PR.
+- **Comments:** the project's own rule wins. Without one, comment only where the
+  code alone would mislead: a counterintuitive reason, an engine or data quirk, a
+  known limitation. Never restate the code, mention code the diff removed or why it
+  changed, or say where you found something: the why goes in the commit message
+  and PR. Comments written while editing record the edit, not the code.
 - Porting from a reference implementation: don't port its bugs, and say what you
   left out.
 - Keep local workarounds and lockfile churn out of commits.
@@ -127,6 +134,10 @@ honestly is what keeps the door open.
 - If their CI runs Windows (`preflight.sh` checks), think about paths and line
   endings; `references/windows.md` has the usual traps.
 - Test the claim in the PR you're least sure of. Say in the PR what you couldn't run.
+- **Before every push, read each comment line the diff adds** (`git diff BASE -U0 |
+  grep -E '^\+.*(//|#|/\*|<!--)'`) as a maintainer who never saw the old code, and
+  delete what the comment rule above doesn't keep. Tests and linters never catch
+  these, and they read as care to the one who wrote them.
 - Before calling anything green, read `references/verification-traps.md`. A check
   that never ran looks exactly like a check that passed.
 

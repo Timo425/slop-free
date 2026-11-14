@@ -79,6 +79,8 @@ working notes and anonymized here. Each rule is followed by the incident that ta
   Taught by: a reviewer approved but asked to delete two of three added clauses, noting no test case could distinguish them.
 - Match the file's comment density; the "why" belongs in the commit message and PR, not a comment block.
   Taught by: a six-line comment above a three-line constant was what reviewers objected to; one-line examples in the file's own style were fine.
+- Follow the project's comment rule, found through AGENTS.md's pointers, and read every added comment line before each push: drop those that restate the code or record the edit.
+  Taught by: a game-server module PR added six comments; the reviewer, who had written the project's comment rule, asked to keep two. The rest restated the code or explained the edit ("no player spell is named X"). The rule was in the C++ guide AGENTS.md points to for C++ changes, which was never opened, and no check looked at comments.
 - When porting from a reference implementation, don't port its bugs; say so and offer to match if asked.
   Taught by: a compat port skipped the reference's own indentation leak, and the leak got its own upstream PR instead.
 - List deliberately out-of-scope cases in the PR body, verified as pre-existing on clean main.
