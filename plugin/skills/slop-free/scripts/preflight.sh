@@ -1,28 +1,31 @@
 #!/usr/bin/env bash
 # Read-only checks to run before spending time on a bug in someone else's repo.
 #
-# Usage: preflight.sh OWNER/REPO [--issue N] [--file PATH]...
-#   --issue N    look for linked PRs, claims and assignees on issue N
-#   --file PATH  look for open or recently merged PRs touching PATH (repeatable)
+# Usage: preflight.sh OWNER/REPO [--issue N] [--file PATH]... [--function NAME]...
+#   --issue N        look for linked PRs, claims and assignees on issue N
+#   --file PATH      look for open or recently merged PRs touching PATH (repeatable)
+#   --function NAME  read the diffs of the open PRs that touch those files for NAME
+#                    (repeatable; needs --file)
 #
-# Limits default to the skill's (2 open per repo, 15 open total, 3 new a week).
-# Override with MAX_PER_REPO, MAX_OPEN and MAX_PER_WEEK. Needs an authenticated gh.
+# Limits default to the skill's (2 open per repo, 15 open total). Override with
+# MAX_PER_REPO and MAX_OPEN. Needs an authenticated gh.
 set -uo pipefail
 
-usage() { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+usage() { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
 [ $# -ge 1 ] || usage 1
 case "$1" in -h|--help) usage ;; esac
 REPO="$1"; shift
-ISSUE=""; FILES=()
+ISSUE=""; FILES=(); FUNCS=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --issue) ISSUE="${2:?--issue needs a number}"; shift 2 ;;
     --file) FILES+=("${2:?--file needs a path}"); shift 2 ;;
+    --function) FUNCS+=("${2:?--function needs a name}"); shift 2 ;;
     -h|--help) usage ;;
     *) echo "unknown argument: $1" >&2; usage 1 ;;
   esac
 done
-MAX_PER_REPO="${MAX_PER_REPO:-2}"; MAX_OPEN="${MAX_OPEN:-15}"; MAX_PER_WEEK="${MAX_PER_WEEK:-3}"
+MAX_PER_REPO="${MAX_PER_REPO:-2}"; MAX_OPEN="${MAX_OPEN:-15}"
 ME="$(gh api user --jq .login)" || { echo "gh is not authenticated" >&2; exit 1; }
 
 days_ago() { date -u -d "$1 days ago" +%Y-%m-%d 2>/dev/null || date -u -v-"$1"d +%Y-%m-%d; }
@@ -64,7 +67,7 @@ week=$(gh api -X GET search/issues -f q="type:pr author:$ME -user:$ME created:>=
 flag() { [ "$1" -ge "$2" ] && echo "  <- at or over the limit of $2" || echo; }
 printf '  open PRs to other repos: %s%s\n' "$open_all" "$(flag "$open_all" "$MAX_OPEN")"
 printf '  open PRs in %s: %s%s\n' "$REPO" "$open_here" "$(flag "$open_here" "$MAX_PER_REPO")"
-printf '  PRs opened in the last 7 days: %s%s\n' "$week" "$(flag "$week" "$MAX_PER_WEEK")"
+printf '  PRs opened in the last 7 days: %s\n' "$week"
 
 if [ -n "$ISSUE" ]; then
   echo
@@ -85,6 +88,7 @@ if [ ${#FILES[@]} -gt 0 ]; then
   echo
   echo "## 5. Other PRs touching your files (100 most recently updated open, 50 most recently merged)"
   owner="${REPO%/*}"; name="${REPO#*/}"
+  open_hits=$(mktemp)
   for state in OPEN MERGED; do
     [ "$state" = OPEN ] && n=100 || n=50
     gh api graphql -F o="$owner" -F r="$name" -F n="$n" -f s="$state" -f query='
@@ -96,12 +100,36 @@ if [ ${#FILES[@]} -gt 0 ]; then
       for f in "${FILES[@]}"; do
         case " $paths " in *" $f "*)
           [ "$merged" = "-" ] && merged=""
-          echo "  #$num $st${merged:+ $merged} by $author touches $f: $title" ;;
+          echo "  #$num $st${merged:+ $merged} by $author touches $f: $title"
+          [ "$st" = OPEN ] && echo "$num" >> "$open_hits" ;;
         esac
       done
     done
   done
   echo "  (no lines means no match in that window)"
+
+  if [ ${#FUNCS[@]} -gt 0 ]; then
+    echo
+    echo "## 5b. Open PRs among those whose diff names your functions (read those hunks)"
+    for num in $(sort -un "$open_hits"); do
+      if ! diff=$(gh pr diff "$num" -R "$REPO" 2>/dev/null); then
+        # Over 20000 lines GitHub refuses the diff: compare just your files at base and head.
+        shas=$(gh api "repos/$REPO/pulls/$num" --jq '"\(.base.sha) \(.head.sha)"') || { echo "  #$num: diff not readable"; continue; }
+        diff=""
+        for f in "${FILES[@]}"; do
+          diff+=$(diff <(gh api -H "Accept: application/vnd.github.raw" "repos/$REPO/contents/$f?ref=${shas% *}" 2>/dev/null) \
+                       <(gh api -H "Accept: application/vnd.github.raw" "repos/$REPO/contents/$f?ref=${shas#* }" 2>/dev/null) \
+                  | sed -n 's/^</-/p; s/^>/+/p')$'\n'
+        done
+      fi
+      for fn in "${FUNCS[@]}"; do
+        hits=$(printf '%s\n' "$diff" | grep -E '^(@@|[+-])' | grep -vE '^(\+\+\+|---) ' | grep -cF -- "$fn")
+        [ "$hits" -gt 0 ] && echo "  #$num changes lines naming $fn ($hits): gh pr diff $num -R $REPO | grep -n -C5 '$fn'"
+      done
+    done
+    echo "  (no lines means no open PR above changes a line naming them)"
+  fi
+  rm -f "$open_hits"
 fi
 
 echo

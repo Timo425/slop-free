@@ -17,7 +17,7 @@ The short version:
 - Follow each project's AI policy to the letter, including disclosure.
 - Root cause or nothing, and a regression test shown failing without the fix.
 - A check that never ran looks exactly like a check that passed.
-- At most 2 open PRs per repo and 3 new ones a week. Look after the open ones first.
+- At most 2 open PRs per repo, none while 15 are open. Look after the open ones first.
 
 ## This fork
 
@@ -67,7 +67,7 @@ in your CLAUDE.md and the skill follows them, for example:
 
 ```markdown
 ## Open source
-- Up to 4 open PRs per repo, 5 new a week.
+- Up to 4 open PRs per repo.
 - You may push fixups to my PR branches without asking; still show me any comment first.
 ```
 

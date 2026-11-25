@@ -15,6 +15,8 @@ working notes and anonymized here. Each rule is followed by the incident that ta
   Taught by: five merged accessibility PRs linked from one issue proved the category; scanning 86 UI files for the same two patterns found real bugs nobody had filed.
 - Expect most audit hits to be false positives, and cross-check open PRs' file lists before writing anything.
   Taught by: of 14 audit hits, 4 were already correct or regex artifacts and 3 were already covered by someone's open PR.
+- On a big shared file, match open PRs by the function you'd change, not the file, and read that part of their diffs.
+  Taught by: 24 open PRs touched the movement file of a bot module; one of them, a maintainer's refactor, rewrote the very rule behind the bug, and a search for the function's name missed it because GitHub search doesn't read diffs. A fresh judge found it; the PR was cut to the part the refactor didn't cover.
 - Prefer a narrow, demonstrable wrong output over a fix that tunes a heuristic.
   Taught by: at a large formatter project, PRs that shifted comment-placement heuristics were closed (one as low quality) while narrow markdown/CSS fixes merged the same week.
 - Quality bar: would a competent human be confident in this diff after reading it once? If it needs a paragraph of defence, don't open it.
@@ -54,7 +56,7 @@ working notes and anonymized here. Each rule is followed by the incident that ta
   Taught by: a year-old stale claim was released with one polite comment. Stale claims cost nothing; blocking others does.
 - A claim without code isn't ownership. If you already hold the diagnosis and code, say so plainly, link it, offer to stand down, never accuse.
   Taught by: a claim posted 30 minutes after an issue was filed restated the filer's own plan and never produced a PR.
-- Cap volume: max 2 open PRs per repo, 3 new per week, none while 15+ are open. Maintaining existing PRs beats opening new ones.
+- Cap volume: max 2 open PRs per repo, none while 15+ are open. Maintaining existing PRs beats opening new ones. (This fork drops upstream's 3-a-week cap: the open count is what the audit below was about, and a weekly cap only delayed a ready, reviewed PR.)
   Taught by: an audit found 23 open PRs, four repos over cap and 9 opened in one week; new work was frozen until the queue shrank.
 - Some repos cap open PRs per outside contributor in their settings.
   Taught by: a 4th `gh pr create` failed with "does not have the correct permissions to execute CreatePullRequest". Queue ready fixes on pushed branches.

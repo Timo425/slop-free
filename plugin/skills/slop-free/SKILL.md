@@ -36,9 +36,10 @@ file, or earlier in the conversation), follow theirs and say which you're using.
   resolving a thread, closing. Approval covers that one action. This is the default
   most worth keeping, because the PR goes out under the user's name and they have to
   be able to explain every line when a maintainer asks.
-- **Volume:** at most 2 open PRs per repo, 3 new PRs a week, and no new PRs while 15
-  or more are open. Past that, maintenance quality drops and maintainers notice the
-  pattern. Looking after open PRs comes before opening new ones.
+- **Volume:** at most 2 open PRs per repo, and no new PRs while 15 or more are open.
+  Past that, maintenance quality drops and maintainers notice the pattern. Looking
+  after open PRs comes before opening new ones. How many were opened this week
+  doesn't change their quality, so this fork has no weekly cap.
 
 Two things don't change whatever the defaults say: a project's own AI policy wins
 (see below), and nothing gets published that the user hasn't seen if the project
@@ -78,7 +79,8 @@ honestly is what keeps the door open.
 - **Is it already being fixed?** Search open AND closed PRs and issues, the user's
   own included. Search by the file and function you'd change, not just the issue's
   words: a competing PR often never mentions the issue. `preflight.sh --issue N
-  --file PATH` does both.
+  --file PATH --function NAME` does both: on a big shared file dozens of PRs match
+  by file, so `--function` reads their diffs for the function you'd change.
 - **Is it still broken?** Reproduce on current main or the latest release. Many open
   bugs are already fixed.
 - **Is it wanted?** An accepting-PRs label, a maintainer asking for it, or a kind of
@@ -96,7 +98,9 @@ honestly is what keeps the door open.
 - **Give a verdict, not "ready":** PR, ask first (an issue or comment with questions
   a maintainer can answer in a minute), or drop. Ask first and drop are good
   outcomes; a well-made PR the project doesn't want is not.
-- **Is the code staying put?** Skip code that's being moved or rewritten.
+- **Is the code staying put?** Skip code that's being moved or rewritten, and that
+  includes an open PR that rewrites the function you'd change: read that part of
+  its diff, because it may already fix your bug or make your fix clash with it.
 - **Will it survive one read?** Prefer a narrow, demonstrable wrong output over
   retuning a heuristic. If the diff needs a paragraph of defence, don't open it.
 - **Claim by exposure.** A fresh issue on a busy repo: claim it before starting. An
