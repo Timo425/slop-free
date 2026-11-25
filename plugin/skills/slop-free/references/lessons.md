@@ -32,6 +32,9 @@ working notes and anonymized here. Each rule is followed by the incident that ta
 - Prefer repos where humans review; expect competition where automation also lands fixes.
   Taught by: an outside PR sat unreviewed for six days while an identical change landed through another PR without referencing it.
 
+- Ask in the clearest form: a small PR that asks its question can beat an issue.
+  Taught by: an ask-first verdict on a new design (a config list of spells that switches a behaviour on) was headed for an issue in prose; the contributor pointed out that an issue without specifics gives maintainers little to answer, while a small PR asking the same question in its description shows it in a minute.
+
 ## 2. Before writing code
 
 - Read CONTRIBUTING, the PR template and any AI/agent policy first, before investigating.

@@ -33,7 +33,7 @@ Phase 1 in SKILL.md covers the rejections, the strategy files and who owns the i
 Not "ready". One of:
 
 - **PR**: it fits, with the evidence (rejections read, direction checked, reviewer pass) and the judge's confidence at 4 or 5.
-- **Ask first**: open an issue or comment with the specific open questions, written so a maintainer can answer in a minute. This is the cheap way to borrow context only the maintainers have.
+- **Ask first**: put the specific open questions to the maintainers, written so they can answer in a minute: in an issue or comment, or in the description of a small PR when the code shows the question better than prose (SKILL.md, "Ask in the clearest form"). This is the cheap way to borrow context only the maintainers have.
 - **Drop**: say why. It's a fine outcome.
 
 Recommend a second look in a later session before anything public if the change is non-trivial or the verdict was close. Slow reconsideration catches what one pass doesn't.

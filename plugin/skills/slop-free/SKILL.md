@@ -95,9 +95,14 @@ honestly is what keeps the door open.
   policy outright.
 - **Does a maintainer own it?** If one is assigned to the issue or has said they'd
   rather do it differently, ask first: they're often reworking that area.
-- **Give a verdict, not "ready":** PR, ask first (an issue or comment with questions
-  a maintainer can answer in a minute), or drop. Ask first and drop are good
-  outcomes; a well-made PR the project doesn't want is not.
+- **Give a verdict, not "ready":** PR, ask first (questions a maintainer can answer
+  in a minute), or drop. Ask first and drop are good outcomes; a well-made PR the
+  project doesn't want is not.
+- **Ask in the clearest form.** A question needs specifics to get an answer: when
+  it's "would you take this design?", a small PR that shows the design and asks in
+  its description is often clearer than an issue describing it in prose. Ask in an
+  issue or comment when the code would be big, or when the idea itself is in doubt
+  before any code is worth writing.
 - **Is the code staying put?** Skip code that's being moved or rewritten, and that
   includes an open PR that rewrites the function you'd change: read that part of
   its diff, because it may already fix your bug or make your fix clash with it.
