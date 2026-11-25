@@ -60,6 +60,20 @@ done
 [ "$found" = 1 ] || echo "  no CONTRIBUTING, AGENTS or PR template found at the usual paths"
 
 echo
+echo "## 2b. Guides those files point to (read the ones for your kind of change BEFORE writing code:"
+echo "##     review checklists say where code belongs and what already exists)"
+pointers=0
+for p in AGENTS.md CLAUDE.md CONTRIBUTING.md .github/CONTRIBUTING.md; do
+  body=$(raw "$p") || continue
+  lines=$(printf '%s\n' "$body" | grep -nE '`[^`]+\.md`' | grep -vE '`(AGENTS|CLAUDE|CONTRIBUTING|README)\.md`$')
+  [ -n "$lines" ] || continue
+  pointers=1
+  echo "  -- $p"
+  printf '%s\n' "$lines" | head -20 | sed 's/^/     /'
+done
+[ "$pointers" = 1 ] || echo "  (no guides referenced)"
+
+echo
 echo "## 3. Your load"
 open_all=$(gh api -X GET search/issues -f q="type:pr author:$ME -user:$ME state:open" --jq .total_count)
 open_here=$(gh api -X GET search/issues -f q="type:pr author:$ME repo:$REPO state:open" --jq .total_count)

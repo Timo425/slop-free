@@ -6,7 +6,9 @@ For the question in `context-fit.md`: is this the right thing to do here, done t
 
 ## When
 
-- Non-trivial contributions, before writing the PR (phase 4).
+- Non-trivial contributions, first on the plan, before any code is written or ported (where it
+  goes, what it reuses); then on the diff before writing the PR (phase 4), if the code went
+  beyond the plan.
 - Skip it for typo or doc fixes that a policy or issue explicitly invites.
 
 ## Step 1: the user's doubts

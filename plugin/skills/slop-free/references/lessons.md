@@ -35,6 +35,9 @@ working notes and anonymized here. Each rule is followed by the incident that ta
 - Ask in the clearest form: a small PR that asks its question can beat an issue.
   Taught by: an ask-first verdict on a new design (a config list of spells that switches a behaviour on) was headed for an issue in prose; the contributor pointed out that an issue without specifics gives maintainers little to answer, while a small PR asking the same question in its description shows it in a minute.
 
+- Judge the plan, not only the diff, and read the project's review guide before porting.
+  Taught by: a fork's change for one dungeon's mobs was ported into the project's shared targeting code and took hours to build and test before the judge, run on the finished diff, found the project's review guide puts encounter code in its dungeon folder and that a helper for the same cloud search already existed.
+
 ## 2. Before writing code
 
 - Read CONTRIBUTING, the PR template and any AI/agent policy first, before investigating.
