@@ -49,13 +49,13 @@ echo "## 2. Contribution and AI policy (read the files in full; these are only t
 found=0
 for p in CONTRIBUTING.md .github/CONTRIBUTING.md docs/CONTRIBUTING.md AGENTS.md CLAUDE.md \
          AI_POLICY.md .github/AI_POLICY.md .github/copilot-instructions.md \
-         .github/PULL_REQUEST_TEMPLATE.md .github/pull_request_template.md; do
+         .github/PULL_REQUEST_TEMPLATE.md .github/pull_request_template.md PULL_REQUEST_TEMPLATE.md; do
   body=$(raw "$p") || continue
   [ -n "$body" ] || continue
   found=1
   echo "  -- $p"
-  printf '%s\n' "$body" | grep -inE '\bAI\b|LLM|language model|copilot|chatgpt|claude|generated|agent|automated|issue first|open an issue|discuss|approved|assign|CLA\b|license agreement|DCO|signed-off-by|sign-off|force.push|squash|changeset|changelog' \
-    | grep -viE 'user.?agent' | head -25 | sed 's/^/     /'
+  printf '%s\n' "$body" | grep -inE '\bAI\b|LLM|language model|copilot|chatgpt|claude|generated|agent|automated|issue first|open an issue|discuss|approved|assign|CLA\b|license agreement|DCO|signed-off-by|sign-off|force.push|squash|changeset|changelog|human|own words|by hand|hand.written' \
+    | grep -viE 'user.?agent' | head -40 | sed 's/^/     /'
 done
 [ "$found" = 1 ] || echo "  no CONTRIBUTING, AGENTS or PR template found at the usual paths"
 
