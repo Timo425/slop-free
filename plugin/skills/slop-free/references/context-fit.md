@@ -16,7 +16,7 @@ Phase 1 in SKILL.md covers the rejections, the strategy files and who owns the i
 
 - **Look for overlap beyond duplicates:** open PRs or issues in the same area, an ongoing refactor, a fork or sibling project where the real work happens, linked discussions.
 - Write down the project's direction in 2–3 sentences as you understand it. If you can't, that's a finding.
-- **Where it goes and what it reuses:** read the review guide the project's agent docs point to (`preflight.sh` section 2b) and find the layer the change belongs in and the helpers it should call, by searching the code, not only the PRs. Code written for a private branch was shaped without these, so check them before porting it, too.
+- **Where it goes and what it reuses:** read the review guide the project's agent docs point to (`preflight.sh` section 2b) and find the layer the change belongs in and the helpers it should call, by searching the code, not only the PRs. Code written for a private branch was shaped without these, so check them before porting it, too. When porting it, list every check and behaviour the tested version has, from its diff, and keep or drop each one on purpose: what isn't listed gets lost.
 
 ## Before writing the PR (with phase 4)
 
