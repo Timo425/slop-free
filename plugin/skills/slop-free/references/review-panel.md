@@ -17,7 +17,7 @@ Ask: "What are your doubts about this, however vague?" Hunches like "do they eve
 
 ## Step 2: the judge
 
-**Claude Code:** Agent tool, `model: opus`, read-only (`gh`, `git`, reading files, web fetch). Give it: the diff (or the plan), the issue text, the repo's contribution and AI rules, the user's doubts, and anything you found during the context-fit searches, labelled as leads, not the whole picture. Don't pass your own opinion of the change, or the conversation. **Without subagents:** do this as a separate pass from those inputs only, and argue each perspective as if you hadn't written the change.
+**Claude Code:** Agent tool, `model: opus`, read-only (`gh`, `git`, reading files, web fetch). Give it: the diff (or the plan), the issue text, the repo's contribution and AI rules, the user's doubts, and anything you found during the context-fit searches, labelled as leads, not the whole picture. When the change ports or rewrites tested code (a private branch, an earlier version), also give it the tested version's diff and ask what that version does that the change doesn't. Don't pass your own opinion of the change, or the conversation. **Without subagents:** do this as a separate pass from those inputs only, and argue each perspective as if you hadn't written the change.
 
 Prompt, adapted:
 
